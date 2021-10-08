@@ -1538,7 +1538,7 @@ static AVStream *icv_add_video_stream_FFMPEG(AVFormatContext *oc,
     // some formats want stream headers to be seperate
     if(oc->oformat->flags & AVFMT_GLOBALHEADER)
     {
-        c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+        c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
 #endif
 
@@ -1566,7 +1566,7 @@ static int icv_av_write_frame_FFMPEG( AVFormatContext * oc, AVStream * video_st,
 #endif
     int ret = OPENCV_NO_FRAMES_WRITTEN_CODE;
 
-    if (oc->oformat->flags & AVFMT_RAWPICTURE) {
+    if (oc->oformat->flags & AVFMT_NOFILE) {
         /* raw video case. The API will change slightly in the near
            futur for that */
         AVPacket pkt;
@@ -1740,7 +1740,7 @@ void CvVideoWriter_FFMPEG::close()
     /* write the trailer, if any */
     if(ok && oc)
     {
-        if( (oc->oformat->flags & AVFMT_RAWPICTURE) == 0 )
+        if( (oc->oformat->flags & AVFMT_NOFILE) == 0 )
         {
             for(;;)
             {
@@ -2036,7 +2036,7 @@ bool CvVideoWriter_FFMPEG::open( const char * filename, int fourcc,
 
     outbuf = NULL;
 
-    if (!(oc->oformat->flags & AVFMT_RAWPICTURE)) {
+    if (!(oc->oformat->flags & AVFMT_NOFILE)) {
         /* allocate output buffer */
         /* assume we will never get codec output with more than 4 bytes per pixel... */
         outbuf_size = width*height*4;
@@ -2335,7 +2335,7 @@ AVStream* OutputMediaStream_FFMPEG::addVideoStream(AVFormatContext *oc, CV_CODEC
         // some formats want stream headers to be seperate
         if (oc->oformat->flags & AVFMT_GLOBALHEADER)
         {
-            c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+            c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
         }
     #endif
 
